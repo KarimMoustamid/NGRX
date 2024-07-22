@@ -15,8 +15,9 @@ export class ProductPageComponent {
   constructor(
     private productsService: ProductsService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) {}
+    private activatedRoute: ActivatedRoute,
+  ) {
+  }
 
   ngOnInit() {
     const productId = parseInt(this.activatedRoute.snapshot.params['id']);
