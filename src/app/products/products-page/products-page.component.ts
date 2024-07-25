@@ -1,9 +1,17 @@
 import { Component } from '@angular/core';
-import { sumProducts } from 'src/app/utils/sum-products';
-import { Product } from '../product.model';
+import { Store } from '@ngrx/store';
 import { ProductsService } from '../products.service';
-import {Store} from "@ngrx/store";
-import {ProductsPageActions} from "../state/products.actions";
+import {
+  ProductsAPIActions,
+  ProductsPageActions,
+} from '../state/products.actions';
+import {
+  selectProducts,
+  selectProductsErrorMessage,
+  selectProductsLoading,
+  selectProductsShowProductCode,
+  selectProductsTotal,
+} from '../state/products.selectors';
 
 @Component({
   selector: 'app-products-page',
@@ -11,29 +19,24 @@ import {ProductsPageActions} from "../state/products.actions";
   styleUrls: ['./products-page.component.css'],
 })
 export class ProductsPageComponent {
-  products: Product[] = [];
-  total = 0;
-  loading = true;
-  showProductCode$ = this.store.select((state: any) => state.products.showProductCode);
-  errorMessage = '';
+  products$ = this.store.select(selectProducts);
+  total$ = this.store.select(selectProductsTotal);
+  loading$ = this.store.select(selectProductsLoading);
+  showProductCode$ = this.store.select(selectProductsShowProductCode);
+  errorMessage$ = this.store.select(selectProductsErrorMessage)
 
-  constructor(private productsService: ProductsService , private store: Store) {
-    this.store.subscribe(store => console.log(store))
-  }
+  constructor(private productsService: ProductsService, private store: Store) {}
 
   ngOnInit() {
     this.getProducts();
   }
 
   getProducts() {
-    this.store.dispatch(ProductsPageActions.loadProducts())
-    this.productsService.getAll().subscribe({
-      next: (products) => {
-        this.products = products;
-        this.total = sumProducts(products);
-        this.loading = false;
-      },
-      error: (error) => (this.errorMessage = error),
+    this.store.dispatch(ProductsPageActions.loadProducts());
+    this.productsService.getAll().subscribe((products) => {
+      this.store.dispatch(
+        ProductsAPIActions.productsLoadedSuccess({ products })
+      );
     });
   }
 
