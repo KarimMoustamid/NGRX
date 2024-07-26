@@ -9,7 +9,7 @@ export interface ProductsState {
   products: Product[];
 }
 
-const intitialState: ProductsState = {
+const initialState: ProductsState = {
   showProductCode: true,
   loading: false,
   errorMessage: '',
@@ -17,7 +17,7 @@ const intitialState: ProductsState = {
 };
 
 export const productsReducer = createReducer(
-  intitialState,
+  initialState,
   on(ProductsPageActions.toggleShowProductCode, (state) => ({
     ...state,
     showProductCode: !state.showProductCode,
